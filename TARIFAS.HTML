@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Tarifas</title>
+    <style>
+        /* Estilos CSS aquí */
+    </style>
+</head>
+<body>
+
+    <h1>Buscador de Tarifas</h1>
+    
+    <label for="barrio">Barrio:</label>
+    <input type="text" id="barrio" placeholder="Ingrese el barrio" onkeyup="buscarConEnter(event)">
+
+    <button onclick="buscarTarifa()">Buscar</button>
+
+    <div id="resultado">
+        <p id="tarifa"></p>
+    </div>
+
+    <!-- https://docs.google.com/spreadsheets/d/e/2PACX-1vSUEOiX_rCi2btzRMW4Lqtp3kA5ASoEYa2pSAkdo9zZf4dIwsctrm-wuSGzhkNxow/pubhtml?gid=1961281201&single=true -->
+
+    <script>
+        var datos = {};
+
+        // Extraer datos de la URL de Google Sheets
+        fetch("URL_COMPARTIDA_DE_GOOGLE_SHEETS")
+            .then(response => response.json())
+            .then(data => {
+                // Convertir todos los barrios a mayúsculas para hacer la búsqueda insensible a mayúsculas/minúsculas
+                datos = Object.fromEntries(Object.entries(data).map(([key, value]) => [key.toUpperCase(), value]));
+                console.log("Datos cargados correctamente:", datos);
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+
+        function buscarTarifa() {
+            var barrio = document.getElementById("barrio").value.toUpperCase(); // Convertir a mayúsculas
+
+            if (datos[barrio]) {
+                console.log("Barrio encontrado:", barrio, datos[barrio]);
+                document.getElementById("tarifa").innerText = "Tarifa para " + barrio + ": " + datos[barrio];
+            } else {
+                console.log("Barrio no encontrado:", barrio);
+                document.getElementById("tarifa").innerText = "Barrio no encontrado";
+            }
+        }
+
+        function buscarConEnter(event) {
+            if (event.key === "Enter") {
+                buscarTarifa();
+            }
+        }
+    </script>
+
+</body>
+</html>
